@@ -1,0 +1,179 @@
+.receipt_date,
+.js_submit,
+.product_button,
+.js_title {
+    text-align: center;
+}
+
+.receipt_table {
+    margin: 30px auto;
+    width: 500px;
+}
+
+.service_code_area,
+.explanation_area,
+.user_list,
+.cart_table,
+.product_area,
+.item_list,
+.insert_table {
+    margin: 30px auto;
+    width: 800px;
+}
+
+.user_info {
+    margin-left: 0;
+    padding-left: 20px;
+    width: 300px;
+}
+
+.user_info th {
+    text-align: left;
+}
+
+.insert_table th {
+    width: 50%;
+}
+
+.insert_table td input,
+.insert_table td select {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.link_area p {
+    margin: 0;
+}
+
+.receipt_table td {
+    padding: 10px;
+}
+
+.total_name,
+.subtotal_name,
+.item_name {
+    width: 60%;
+    text-align: left;
+}
+
+.total_data,
+.subtotal_data,
+.item_price {
+    width: 40%;
+    text-align: right;
+}
+
+.user_list th,
+.user_list td,
+.cart_table th,
+.cart_table td,
+.item_list th,
+.item_list td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.user_list th,
+.cart_table th,
+.item_list th {
+    background-color: #f5f5f5;
+}
+
+.link_area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.service_code_area,
+.product_area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.product_button {
+    width: 180px;
+    height: 90px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.service_code_button {
+    width: 260px;
+    height: 90px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.service_code_name,
+.product_name {
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.service_code_info,
+.product_info {
+    font-size: small;
+    color: #666;
+}
+
+.receipt_border td {
+    border-bottom: 1px solid #000;
+    height: 10px;
+}
+
+.border_line {
+    width: 800px;
+    border-top: 1px solid #000;
+    margin: 20px auto;
+}
+
+.total_name,
+.total_data {
+    font-size: large;
+    font-weight: bold;
+}
+
+.insert_table td input,
+.insert_table td select {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.cnt_col,
+.js_service_count,
+.unit_col,
+.js_unit {
+    width: 80px;
+}
+
+.col_120 {
+    width: 120;
+}
+
+.js_service_count input {
+    width: 80px;
+    display: block;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.result_total {
+    text-align: right !important;
+    font-weight: bold !important;
+}

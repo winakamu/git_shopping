@@ -1,14 +1,29 @@
 <?php
-/**
- * The development database settings. These get merged with the global settings.
- */
 
-return [
-	'mongo' => [
-		'default' => [
-			'hostname' => 'shopping-mongo',
-			'port'     => 27017,
-			'database' => 'practice_shopping_db',
-		],
-	],
-];
+return array(
+    'default' => array(
+        'type' => 'pdo',
+
+        'connection' => array(
+            'dsn'        => 'mysql:host=mysql;port=3306;dbname=shopping',
+            'username'   => 'root',
+            'password'   => 'root',
+            'persistent' => false,
+        ),
+
+        'identifier'   => '`',
+        'table_prefix' => '',
+        'charset'      => 'utf8mb4',
+        'enable_cache' => true,
+        'profiling'    => true,
+    ),
+
+    // mongoDBの設定追加
+    'mongo' => array(
+        'default' => array(
+            'hostname' => 'shopping-mongo',
+            'port'     => 27017,
+            'database' => 'shopping',
+        ),
+    ),
+);

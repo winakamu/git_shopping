@@ -36,11 +36,11 @@ class Controller_Management extends Controller
             }
 
             // MongoDBへ登録する商品データを作成
-            $item = array(
+            $item = [
                 'name'  => $product_name, //商品名
                 'tax'   => $tax,          //消費税
                 'price' => (int) $price,  //1個あたりの値段(税抜)
-            );
+            ];
 
             // 商品情報をMongoDBへ登録
             Model_Item::insert_item($item);

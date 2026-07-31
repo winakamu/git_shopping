@@ -1,14 +1,18 @@
 <?php
 
-class Model_Item extends Model
+class Model_Item extends Model_Mongo
 {
+    /**
+     * 使用するコレクション名
+     */
+    protected static $collection = 'item';
+
     /**
      * 商品を登録
      */
     public static function insert_item(array $item)
     {
-        return Mongo_Db::instance()
-            ->insert('item', $item);
+        return self::insert_data($item);
     }
 
     /**
@@ -16,8 +20,7 @@ class Model_Item extends Model
      */
     public static function get_items()
     {
-        return Mongo_Db::instance()
-            ->get('item');
+        return self::get_all_data();
     }
 
     /**
@@ -25,11 +28,7 @@ class Model_Item extends Model
      */
     public static function get_item($id)
     {
-        return Mongo_Db::instance()
-            ->where(array(
-                '_id' => new MongoId($id),
-            ))
-            ->get_one('item');
+        return self::get_data($id);
     }
 
     /**
@@ -37,11 +36,7 @@ class Model_Item extends Model
      */
     public static function update_item($id, array $item)
     {
-        return Mongo_Db::instance()
-            ->where(array(
-                '_id' => new MongoId($id),
-            ))
-            ->update('item', $item);
+        return self::update_data($id, $item);
     }
 
     /**
@@ -49,10 +44,6 @@ class Model_Item extends Model
      */
     public static function delete_item($id)
     {
-        return Mongo_Db::instance()
-            ->where(array(
-                '_id' => new MongoId($id),
-            ))
-            ->delete('item');
+        return self::delete_data($id);
     }
 }

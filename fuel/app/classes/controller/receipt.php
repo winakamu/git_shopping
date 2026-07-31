@@ -33,7 +33,7 @@ class Controller_Receipt extends Controller
     public function action_receipt_view($id = null)
     {
         // レシートIDがない場合は一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/receipt/list');
         }
 
@@ -45,19 +45,8 @@ class Controller_Receipt extends Controller
             return Response::redirect('/receipt/list');
         }
 
-        // 日付表示用のフォーマットを作成
-        $timestamp = strtotime($receipt_data['created_at']);
-
-        $weekdays = array(
-            '日', '月', '火', '水', '木', '金', '土'
-        );
-
-        $weekday = $weekdays[(int) date('w', $timestamp)];
-
-        $receipt_data['view_date'] =
-            date('Y年m月d日', $timestamp)
-            . '(' . $weekday . ') '
-            . date('H時i分', $timestamp);
+        // 日付を画面表示用に整形
+        $receipt_data = Model_Receipt::format_receipt($receipt_data);
 
         // レシート詳細画面へデータを渡す
         return View::forge('receipt/receipt', array(
@@ -73,23 +62,8 @@ class Controller_Receipt extends Controller
         // レシート一覧を取得
         $items = Model_Receipt::get_receipts();
 
-        // 表示用の日付形式へ変換
-        foreach ($items as &$item) {
-
-            $timestamp = strtotime($item['created_at']);
-
-            $weekdays = array(
-                '日', '月', '火', '水', '木', '金', '土'
-            );
-
-            $weekday = $weekdays[(int) date('w', $timestamp)];
-
-            $item['view_date'] =
-                date('Y年m月d日', $timestamp)
-                . '(' . $weekday . ') '
-                . date('H時i分', $timestamp);
-        }
-        unset($item);
+        // レシート一覧の日付を画面表示用に整形
+        $items = Model_Receipt::format_receipts($items);
 
         // 一覧画面へデータを渡す
         return View::forge('receipt/list', array(
@@ -203,7 +177,7 @@ class Controller_Receipt extends Controller
     public function action_delete($id = null)
     {
         // レシートIDがない場合は一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/receipt/list');
         }
 

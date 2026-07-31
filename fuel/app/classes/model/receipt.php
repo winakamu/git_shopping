@@ -1,14 +1,18 @@
 <?php
 
-class Model_Receipt extends Model
+class Model_Receipt extends Model_Mongo
 {
+    /**
+     * 使用するコレクション名
+     */
+    protected static $collection = 'receipt';
+
     /**
      * レシートを登録
      */
     public static function insert_receipt(array $receipt)
     {
-        return Mongo_Db::instance()
-            ->insert('receipt', $receipt);
+        return self::insert_data($receipt);
     }
 
     /**
@@ -16,8 +20,7 @@ class Model_Receipt extends Model
      */
     public static function get_receipts()
     {
-        return Mongo_Db::instance()
-            ->get('receipt');
+        return self::get_all_data();
     }
 
     /**
@@ -25,11 +28,7 @@ class Model_Receipt extends Model
      */
     public static function get_receipt($id)
     {
-        return Mongo_Db::instance()
-            ->where(array(
-                '_id' => new MongoId($id),
-            ))
-            ->get_one('receipt');
+        return self::get_data($id);
     }
 
     /**
@@ -37,10 +36,53 @@ class Model_Receipt extends Model
      */
     public static function delete_receipt($id)
     {
-        return Mongo_Db::instance()
-            ->where(array(
-                '_id' => new MongoId($id),
-            ))
-            ->delete('receipt');
+        return self::delete_data($id);
+    }
+
+    /**
+     * レシート一覧の日付を表示用に整形
+     */
+    public static function format_receipts(array $receipts)
+    {
+        foreach ($receipts as &$receipt) {
+            $receipt = self::format_receipt($receipt);
+        }
+        unset($receipt);
+
+        return $receipts;
+    }
+
+    /**
+     * レシート1件の日付を表示用に整形
+     */
+    public static function format_receipt(array $receipt_data)
+    {
+        if (empty($receipt_data['created_at'])) {
+            $receipt_data['view_date'] = '';
+
+            return $receipt_data;
+        }
+
+        $timestamp = strtotime($receipt_data['created_at']);
+
+        // 日付変換に失敗した場合
+        if ($timestamp === false) {
+            $receipt_data['view_date'] = '';
+
+            return $receipt_data;
+        }
+
+        $weekdays = array(
+            '日', '月', '火', '水', '木', '金', '土'
+        );
+
+        $weekday = $weekdays[(int) date('w', $timestamp)];
+
+        $receipt_data['view_date'] =
+            date('Y年m月d日', $timestamp)
+            . '(' . $weekday . ') '
+            . date('H時i分', $timestamp);
+
+        return $receipt_data;
     }
 }

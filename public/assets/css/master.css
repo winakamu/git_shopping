@@ -183,3 +183,12 @@
     font-size: 14px;
     margin-top: 4px;
 }
+
+.insert_table th,
+.insert_table td {
+    vertical-align: top;
+}
+
+.insert_table th {
+    padding-top: 4px;
+}

@@ -13,8 +13,12 @@
 class Controller_Receipt extends Controller
 {
     /**
-     * お会計画面表示
-     * index = default action（クラスにアクセスした場合、FuelPHPが自動で探して実行する）
+     * お会計画面を表示します。
+     *
+     * indexはデフォルトアクションであり、
+     * /receiptへアクセスした際に実行されます。
+     *
+     * @return View
      */
     public function action_index()
     {
@@ -28,7 +32,14 @@ class Controller_Receipt extends Controller
     }
 
     /**
-     * レシート詳細表示
+     * 指定されたレシートの詳細画面を表示します。
+     *
+     * レシートIDが存在しない場合、またはレシートが見つからない場合は
+     * レシート一覧画面へリダイレクトし、
+     * レシートが存在する場合はレシート詳細画面を表示します。
+     *
+     * @param string|null $id 表示するレシートID
+     * @return Response|View
      */
     public function action_receipt_view($id = null)
     {
@@ -49,13 +60,18 @@ class Controller_Receipt extends Controller
         $receipt_data = Model_Receipt::format_receipt($receipt_data);
 
         // レシート詳細画面へデータを渡す
-        return View::forge('receipt/receipt', array(
+        return View::forge('receipt/receipt', [
             'receipt_data' => $receipt_data,
-        ));
+        ]);
     }
 
     /**
-     * レシート一覧表示
+     * レシート一覧画面を表示します。
+     *
+     * レシート一覧を取得し、表示用の日付形式へ変換して
+     * レシート一覧画面を表示します。
+     *
+     * @return View
      */
     public function action_list()
     {
@@ -66,13 +82,20 @@ class Controller_Receipt extends Controller
         $items = Model_Receipt::format_receipts($items);
 
         // 一覧画面へデータを渡す
-        return View::forge('receipt/list', array(
+        return View::forge('receipt/list', [
             'items' => $items,
-        ));
+        ]);
     }
 
     /**
-     * レシート作成
+     * レシートを作成します。
+     *
+     * POST以外のアクセス、または商品が選択されていない場合は
+     * お会計画面へリダイレクトします。
+     * 商品情報から税額・合計金額を計算し、
+     * レシート登録後はレシート一覧画面へリダイレクトします。
+     *
+     * @return Response
      */
     public function action_receipt_create()
     {
@@ -82,7 +105,7 @@ class Controller_Receipt extends Controller
         }
 
         // 購入商品を取得
-        $items = Input::post('items', array());
+        $items = Input::post('items', []);
 
         // 商品が選択されていない場合はお会計画面へ戻る
         if (empty($items)) {
@@ -96,24 +119,24 @@ class Controller_Receipt extends Controller
         unset($item);
 
         // 税率ごとの小計を初期化
-        $subtotal = array(
-            'tax_8' => array(
+        $subtotal = [
+            'tax_8' => [
                 'excluding_tax' => 0,
                 'consumption_tax' => 0,
-            ),
-            'tax_10' => array(
+            ],
+            'tax_10' => [
                 'excluding_tax' => 0,
                 'consumption_tax' => 0,
-            ),
-            'tax_exempt' => array(
+            ],
+            'tax_exempt' => [
                 'excluding_tax' => 0,
                 'consumption_tax' => 0,
-            ),
-            'tax_included' => array(
+            ],
+            'tax_included' => [
                 'excluding_tax' => 0,
                 'consumption_tax' => 0,
-            ),
-        );
+            ],
+        ];
 
         // 合計金額を初期化
         $total = 0;
@@ -155,12 +178,12 @@ class Controller_Receipt extends Controller
         }
 
         // レシートデータを作成
-        $receipt = array(
+        $receipt = [
             'items' => $items,
             'subtotal' => $subtotal,
             'total' => $total,
             'created_at' => date('Y-m-d H:i:s'),
-        );
+        ];
 
         // MongoDBへレシートを登録
         $receipt_id = Model_Receipt::insert_receipt($receipt);
@@ -172,7 +195,13 @@ class Controller_Receipt extends Controller
     }
 
     /**
-     * レシート削除
+     * 指定されたレシートを削除します。
+     *
+     * レシートIDが存在しない場合はレシート一覧画面へリダイレクトし、
+     * 削除完了後はレシート一覧画面へリダイレクトします。
+     *
+     * @param string|null $id 削除するレシートID
+     * @return Response
      */
     public function action_delete($id = null)
     {

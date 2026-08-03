@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MongoDBを操作する共通Model
+ * MongoDBを操作する共通Modelです。
  */
 abstract class Model_Mongo extends Model
 {
@@ -11,7 +11,10 @@ abstract class Model_Mongo extends Model
     protected static $collection = '';
 
     /**
-     * データを登録
+     * データを登録します。
+     *
+     * @param array $data 登録するデータ
+     * @return string 登録したデータのMongoDB ID
      */
     protected static function insert_data(array $data)
     {
@@ -20,7 +23,9 @@ abstract class Model_Mongo extends Model
     }
 
     /**
-     * データを全件取得
+     * データを全件取得します。
+     *
+     * @return array データ一覧
      */
     protected static function get_all_data()
     {
@@ -29,38 +34,48 @@ abstract class Model_Mongo extends Model
     }
 
     /**
-     * IDを指定してデータを1件取得
+     * IDを指定してデータを1件取得します。
+     *
+     * @param string $id 取得するデータのID
+     * @return array データ情報
      */
     protected static function get_data($id)
     {
         return Mongo_Db::instance()
-            ->where(array(
+            ->where([
                 '_id' => new MongoId($id),
-            ))
+            ])
             ->get_one(static::$collection);
     }
 
     /**
-     * IDを指定してデータを更新
+     * IDを指定してデータを更新します。
+     *
+     * @param string $id 更新対象のデータID
+     * @param array $data 更新するデータ
+     * @return mixed 更新結果
      */
     protected static function update_data($id, array $data)
     {
         return Mongo_Db::instance()
-            ->where(array(
+            ->where([
                 '_id' => new MongoId($id),
-            ))
+            ])
             ->update(static::$collection, $data);
     }
 
     /**
-     * IDを指定してデータを削除
+     * IDを指定してデータを削除します。
+     *
+     * @param string $id 削除対象のデータID
+     * @return mixed 削除結果
      */
     protected static function delete_data($id)
     {
         return Mongo_Db::instance()
-            ->where(array(
+            ->where([
                 '_id' => new MongoId($id),
-            ))
+            ])
             ->delete(static::$collection);
     }
 }

@@ -118,27 +118,27 @@ class Controller_Management extends Controller
      */
     public function action_update($id = null)
     {
-        // 商品IDが存在しない場合は一覧へ戻る
+        // 商品IDが存在しない場合は商品一覧へ戻る
         if ($id === null) {
             return Response::redirect('/management/list');
         }
 
-        // POST以外のアクセスは禁止
+        // POST以外のアクセスの場合は編集画面へ戻る
         if (Input::method() !== 'POST') {
             return Response::redirect('/management/edit/' . $id);
         }
 
-        // 入力された値を取得
+        // フォームから入力された値を取得
         $product_name = trim((string) Input::post('product_name', ''));
         $tax = (string) Input::post('tax', 'exempt');
         $price = trim((string) Input::post('price', ''));
 
-        // 必須項目チェック
+        // 商品名または価格が未入力の場合は編集画面へ戻る
         if ($product_name === '' || $price === '') {
             return Response::redirect('/management/edit/' . $id);
         }
 
-        // 数値チェック(price が「数字だけ」ではないなら)
+        // 価格が数値以外の場合は編集画面へ戻る
         if (!ctype_digit($price)) {
             return Response::redirect('/management/edit/' . $id);
         }

@@ -1,12 +1,21 @@
 <?php
 
 /**
- * MongoDBを操作する共通Modelです。
+ * MongoDBの共通処理を行うModelです。
+ *
+ * 【機能】
+ * ・データ登録
+ * ・データ全件取得
+ * ・データ1件取得
+ * ・データ更新
+ * ・データ削除
  */
 abstract class Model_Mongo extends Model
 {
     /**
      * 各Modelで使用するコレクション名
+     *
+     * @var string
      */
     protected static $collection = '';
 
@@ -25,19 +34,27 @@ abstract class Model_Mongo extends Model
     /**
      * データを全件取得します。
      *
+     * 並び順が指定された場合は、指定した順序でデータを取得します。
+     *
+     * @param array $order 並び順
      * @return array データ一覧
      */
-    protected static function get_all_data()
+    protected static function get_all_data(array $order = [])
     {
-        return Mongo_Db::instance()
-            ->get(static::$collection);
+        $query = Mongo_Db::instance();
+
+        if (!empty($order)) {
+            $query->order_by($order);
+        }
+
+        return $query->get(static::$collection);
     }
 
     /**
      * IDを指定してデータを1件取得します。
      *
      * @param string $id 取得するデータのID
-     * @return array データ情報
+     * @return array|null データ情報
      */
     protected static function get_data($id)
     {

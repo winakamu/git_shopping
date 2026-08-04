@@ -92,8 +92,8 @@ class Controller_Receipt extends Controller
      *
      * POST以外のアクセス、または商品が選択されていない場合は
      * お会計画面へリダイレクトします。
-     * 商品情報から税額・合計金額を計算し、
-     * レシート登録後はレシート画面へリダイレクトします。
+     * 商品情報をModelへ渡してレシートを登録し、
+     * 登録後はレシート詳細画面へリダイレクトします。
      *
      * @return Response
      */
@@ -112,81 +112,8 @@ class Controller_Receipt extends Controller
             return Response::redirect('/receipt');
         }
 
-        // priceを整数へ変換
-        foreach ($items as &$item) {
-            $item['price'] = (int) $item['price'];
-        }
-        unset($item);
-
-        // 税率ごとの小計を初期化
-        $subtotal = [
-            'tax_8' => [
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ],
-            'tax_10' => [
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ],
-            'tax_exempt' => [
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ],
-            'tax_included' => [
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ],
-        ];
-
-        // 合計金額を初期化
-        $total = 0;
-
-        // 商品ごとの税額・合計金額を計算
-        foreach ($items as $item) {
-
-            $price = $item['price'];
-            $tax = $item['tax'];
-
-            if ($tax === '8') {
-
-                $taxAmount = floor($price * 0.08);
-
-                $subtotal['tax_8']['excluding_tax'] += $price;
-                $subtotal['tax_8']['consumption_tax'] += $taxAmount;
-
-                $total += $price + $taxAmount;
-
-            } elseif ($tax === '10') {
-
-                $taxAmount = floor($price * 0.10);
-
-                $subtotal['tax_10']['excluding_tax'] += $price;
-                $subtotal['tax_10']['consumption_tax'] += $taxAmount;
-
-                $total += $price + $taxAmount;
-
-            } elseif ($tax === 'exempt') {
-
-                $subtotal['tax_exempt']['excluding_tax'] += $price;
-                $total += $price;
-
-            } elseif ($tax === 'included') {
-
-                $subtotal['tax_included']['excluding_tax'] += $price;
-                $total += $price;
-            }
-        }
-
-        // レシートデータを作成
-        $receipt = [
-            'items' => $items,
-            'subtotal' => $subtotal,
-            'total' => (int) $total,
-            'created_at' => date('Y-m-d H:i:s'),
-        ];
-
-        // MongoDBへレシートを登録
-        $receipt_id = Model_Receipt::insert_receipt($receipt);
+        // レシートを作成してMongoDBへ登録
+        $receipt_id = Model_Receipt::create_receipt($items);
 
         // 登録したレシート詳細画面へリダイレクト
         return Response::redirect('/receipt/receipt_view/' . $receipt_id);

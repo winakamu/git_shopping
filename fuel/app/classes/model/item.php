@@ -1,9 +1,21 @@
 <?php
 
+/**
+ * 商品情報を管理するModelです。
+ *
+ * 【機能】
+ * ・商品登録
+ * ・商品全件取得
+ * ・商品1件取得
+ * ・商品更新
+ * ・商品削除
+ */
 class Model_Item extends Model_Mongo
 {
     /**
      * 使用するコレクション名
+     *
+     * @var string
      */
     protected static $collection = 'item';
 
@@ -29,10 +41,10 @@ class Model_Item extends Model_Mongo
     }
 
     /**
-     * 指定された商品を取得します。
+     * 商品を1件取得します。
      *
-     * @param string $id 商品ID
-     * @return array 商品情報
+     * @param string $id 取得する商品のID
+     * @return array|null 商品情報
      */
     public static function get_item($id)
     {
@@ -52,9 +64,9 @@ class Model_Item extends Model_Mongo
     }
 
     /**
-     * 指定された商品を削除します。
+     * 商品を削除します。
      *
-     * @param string $id 削除対象の商品ID
+     * @param string $id 削除する商品のID
      * @return mixed 削除結果
      */
     public static function delete_item($id)

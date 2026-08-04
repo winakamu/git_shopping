@@ -22,8 +22,8 @@ class Controller_Management extends Controller
      */
     public function action_insert()
     {
-        // POST送信時のみ登録処理を実行
-        if (Input::method() === 'POST') {
+        // POSTデータが送信された場合は登録処理を実行
+        if (!empty(Input::post())) {
 
             // フォームから入力された値を取得
             $product_name = trim((string) Input::post('product_name', ''));
@@ -87,7 +87,7 @@ class Controller_Management extends Controller
     public function action_edit($id = null)
     {
         // 商品IDが存在しない場合は一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/management/list');
         }
 
@@ -119,7 +119,7 @@ class Controller_Management extends Controller
     public function action_update($id = null)
     {
         // 商品IDが存在しない場合は商品一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/management/list');
         }
 
@@ -169,7 +169,7 @@ class Controller_Management extends Controller
     public function action_delete($id = null)
     {
         // 商品IDが存在しない場合は一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/management/list');
         }
 

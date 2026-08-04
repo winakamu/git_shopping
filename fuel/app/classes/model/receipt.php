@@ -8,10 +8,7 @@ class Model_Receipt extends Model_Mongo
     protected static $collection = 'receipt';
 
     /**
-     * レシートを登録します。
-     *
-     * @param array $receipt 登録するレシート情報
-     * @return string 登録したレシートのMongoDB ID
+     * レシートを登録
      */
     public static function insert_receipt(array $receipt)
     {
@@ -19,20 +16,19 @@ class Model_Receipt extends Model_Mongo
     }
 
     /**
-     * レシートを全件取得します。
-     *
-     * @return array レシート一覧
+     * レシートを全件取得
      */
     public static function get_receipts()
     {
-        return self::get_all_data();
+        return Mongo_Db::instance()
+            ->order_by([
+                '_id' => 'desc',
+            ])
+            ->get('receipt');
     }
 
     /**
-     * 指定されたレシートを1件取得します。
-     *
-     * @param string $id 取得するレシートID
-     * @return array レシート情報
+     * レシートを1件取得
      */
     public static function get_receipt($id)
     {
@@ -40,10 +36,7 @@ class Model_Receipt extends Model_Mongo
     }
 
     /**
-     * 指定されたレシートを削除します。
-     *
-     * @param string $id 削除するレシートID
-     * @return mixed 削除結果
+     * レシートを削除
      */
     public static function delete_receipt($id)
     {
@@ -51,13 +44,7 @@ class Model_Receipt extends Model_Mongo
     }
 
     /**
-     * レシート一覧の日付を表示用に整形します。
-     *
-     * 各レシートに対して日付整形処理を行い、
-     * 表示用の日付をview_dateへ設定します。
-     *
-     * @param array $receipts 整形するレシート一覧
-     * @return array 日付整形後のレシート一覧
+     * レシート一覧の日付を表示用に整形
      */
     public static function format_receipts(array $receipts)
     {
@@ -70,13 +57,7 @@ class Model_Receipt extends Model_Mongo
     }
 
     /**
-     * レシート1件の日付を表示用に整形します。
-     *
-     * created_atを「YYYY年MM月DD日(曜日) HH時MM分」の形式に変換し、
-     * view_dateへ設定します。
-     *
-     * @param array $receipt_data 整形するレシート情報
-     * @return array 日付整形後のレシート情報
+     * レシート1件の日付を表示用に整形
      */
     public static function format_receipt(array $receipt_data)
     {
@@ -95,9 +76,9 @@ class Model_Receipt extends Model_Mongo
             return $receipt_data;
         }
 
-        $weekdays = [
-            '日', '月', '火', '水', '木', '金', '土',
-        ];
+        $weekdays = array(
+            '日', '月', '火', '水', '木', '金', '土'
+        );
 
         $weekday = $weekdays[(int) date('w', $timestamp)];
 

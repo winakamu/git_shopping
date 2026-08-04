@@ -93,7 +93,7 @@ class Controller_Receipt extends Controller
      * POST以外のアクセス、または商品が選択されていない場合は
      * お会計画面へリダイレクトします。
      * 商品情報から税額・合計金額を計算し、
-     * レシート登録後はレシート一覧画面へリダイレクトします。
+     * レシート登録後はレシート画面へリダイレクトします。
      *
      * @return Response
      */
@@ -181,17 +181,15 @@ class Controller_Receipt extends Controller
         $receipt = [
             'items' => $items,
             'subtotal' => $subtotal,
-            'total' => $total,
+            'total' => (int) $total,
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
         // MongoDBへレシートを登録
         $receipt_id = Model_Receipt::insert_receipt($receipt);
 
-        // 登録結果確認（デバッグ用）
-        //Debug::dump($receipt_id);
-        // exit;
-        return Response::redirect('/receipt/list');
+        // 登録したレシート詳細画面へリダイレクト
+        return Response::redirect('/receipt/receipt_view/' . $receipt_id);
     }
 
     /**

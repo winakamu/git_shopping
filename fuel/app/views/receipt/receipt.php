@@ -30,27 +30,27 @@
 
                 <!-- 購入商品一覧 -->
                 <?php foreach ($receipt_data['items'] as $item): ?>
-                <tr>
-                    <td class="item_name">
+                    <tr>
+                        <td class="item_name">
 
-                        <!-- 商品の税区分を表示 -->
-                        <?php if($item['tax']=='8%'): ?>
-                            軽)
-                        <?php elseif($item['tax']=='非課税'): ?>
-                            非)
-                        <?php elseif($item['tax']=='税込'): ?>
-                            込)
-                        <?php endif; ?>
+                            <!-- 商品の税区分を表示 -->
+                            <?php if ($item['tax'] === '8'): ?>
+                                軽)
+                            <?php elseif ($item['tax'] === 'exempt'): ?>
+                                非)
+                            <?php elseif ($item['tax'] === 'included'): ?>
+                                込)
+                            <?php endif; ?>
 
-                        <!-- 商品名 -->
-                        <?= $item['name'] ?>
-                    </td>
+                            <!-- 商品名 -->
+                            <?= $item['name']; ?>
+                        </td>
 
-                    <!-- 商品価格 -->
-                    <td class="item_price">
-                        <?= $item['price'] ?>
-                    </td>
-                </tr>
+                        <!-- 商品価格 -->
+                        <td class="item_price">
+                            <?= $item['price']; ?>円
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
 
                 <!-- 区切り線 -->

@@ -13,8 +13,12 @@
 class Controller_Receipt extends Controller
 {
     /**
-     * お会計画面表示
-     * index = default action（クラスにアクセスした場合、FuelPHPが自動で探して実行する）
+     * お会計画面を表示します。
+     *
+     * indexはデフォルトアクションであり、
+     * /receiptへアクセスした際に実行されます。
+     *
+     * @return View
      */
     public function action_index()
     {
@@ -28,12 +32,19 @@ class Controller_Receipt extends Controller
     }
 
     /**
-     * レシート詳細表示
+     * 指定されたレシートの詳細画面を表示します。
+     *
+     * レシートIDが存在しない場合、またはレシートが見つからない場合は
+     * レシート一覧画面へリダイレクトし、
+     * レシートが存在する場合はレシート詳細画面を表示します。
+     *
+     * @param string|null $id 表示するレシートID
+     * @return Response|View
      */
     public function action_receipt_view($id = null)
     {
         // レシートIDがない場合は一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/receipt/list');
         }
 
@@ -45,60 +56,46 @@ class Controller_Receipt extends Controller
             return Response::redirect('/receipt/list');
         }
 
-        // 日付表示用のフォーマットを作成
-        $timestamp = strtotime($receipt_data['created_at']);
-
-        $weekdays = array(
-            '日', '月', '火', '水', '木', '金', '土'
-        );
-
-        $weekday = $weekdays[(int) date('w', $timestamp)];
-
-        $receipt_data['view_date'] =
-            date('Y年m月d日', $timestamp)
-            . '(' . $weekday . ') '
-            . date('H時i分', $timestamp);
+        // 日付を画面表示用に整形
+        $receipt_data = Model_Receipt::format_receipt($receipt_data);
 
         // レシート詳細画面へデータを渡す
-        return View::forge('receipt/receipt', array(
+        return View::forge('receipt/receipt', [
             'receipt_data' => $receipt_data,
-        ));
+        ]);
     }
 
     /**
-     * レシート一覧表示
+     * レシート一覧画面を表示します。
+     *
+     * レシート一覧を取得し、表示用の日付形式へ変換して
+     * レシート一覧画面を表示します。
+     *
+     * @return View
      */
     public function action_list()
     {
         // レシート一覧を取得
         $items = Model_Receipt::get_receipts();
 
-        // 表示用の日付形式へ変換
-        foreach ($items as &$item) {
-
-            $timestamp = strtotime($item['created_at']);
-
-            $weekdays = array(
-                '日', '月', '火', '水', '木', '金', '土'
-            );
-
-            $weekday = $weekdays[(int) date('w', $timestamp)];
-
-            $item['view_date'] =
-                date('Y年m月d日', $timestamp)
-                . '(' . $weekday . ') '
-                . date('H時i分', $timestamp);
-        }
-        unset($item);
+        // レシート一覧の日付を画面表示用に整形
+        $items = Model_Receipt::format_receipts($items);
 
         // 一覧画面へデータを渡す
-        return View::forge('receipt/list', array(
+        return View::forge('receipt/list', [
             'items' => $items,
-        ));
+        ]);
     }
 
     /**
-     * レシート作成
+     * レシートを作成します。
+     *
+     * POST以外のアクセス、または商品が選択されていない場合は
+     * お会計画面へリダイレクトします。
+     * 商品情報をModelへ渡してレシートを登録し、
+     * 登録後はレシート詳細画面へリダイレクトします。
+     *
+     * @return Response
      */
     public function action_receipt_create()
     {
@@ -108,102 +105,33 @@ class Controller_Receipt extends Controller
         }
 
         // 購入商品を取得
-        $items = Input::post('items', array());
+        $items = Input::post('items', []);
 
         // 商品が選択されていない場合はお会計画面へ戻る
         if (empty($items)) {
             return Response::redirect('/receipt');
         }
 
-        // priceを整数へ変換
-        foreach ($items as &$item) {
-            $item['price'] = (int) $item['price'];
-        }
-        unset($item);
+        // レシートを作成してMongoDBへ登録
+        $receipt_id = Model_Receipt::create_receipt($items);
 
-        // 税率ごとの小計を初期化
-        $subtotal = array(
-            'tax_8' => array(
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ),
-            'tax_10' => array(
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ),
-            'tax_exempt' => array(
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ),
-            'tax_included' => array(
-                'excluding_tax' => 0,
-                'consumption_tax' => 0,
-            ),
-        );
-
-        // 合計金額を初期化
-        $total = 0;
-
-        // 商品ごとの税額・合計金額を計算
-        foreach ($items as $item) {
-
-            $price = $item['price'];
-            $tax = $item['tax'];
-
-            if ($tax === '8') {
-
-                $taxAmount = floor($price * 0.08);
-
-                $subtotal['tax_8']['excluding_tax'] += $price;
-                $subtotal['tax_8']['consumption_tax'] += $taxAmount;
-
-                $total += $price + $taxAmount;
-
-            } elseif ($tax === '10') {
-
-                $taxAmount = floor($price * 0.10);
-
-                $subtotal['tax_10']['excluding_tax'] += $price;
-                $subtotal['tax_10']['consumption_tax'] += $taxAmount;
-
-                $total += $price + $taxAmount;
-
-            } elseif ($tax === 'exempt') {
-
-                $subtotal['tax_exempt']['excluding_tax'] += $price;
-                $total += $price;
-
-            } elseif ($tax === 'included') {
-
-                $subtotal['tax_included']['excluding_tax'] += $price;
-                $total += $price;
-            }
-        }
-
-        // レシートデータを作成
-        $receipt = array(
-            'items' => $items,
-            'subtotal' => $subtotal,
-            'total' => $total,
-            'created_at' => date('Y-m-d H:i:s'),
-        );
-
-        // MongoDBへレシートを登録
-        $receipt_id = Model_Receipt::insert_receipt($receipt);
-
-        // 登録結果確認（デバッグ用）
-        //Debug::dump($receipt_id);
-        // exit;
-        return Response::redirect('/receipt/list');
+        // 登録したレシート詳細画面へリダイレクト
+        return Response::redirect('/receipt/receipt_view/' . $receipt_id);
     }
 
     /**
-     * レシート削除
+     * 指定されたレシートを削除します。
+     *
+     * レシートIDが存在しない場合はレシート一覧画面へリダイレクトし、
+     * 削除完了後はレシート一覧画面へリダイレクトします。
+     *
+     * @param string|null $id 削除するレシートID
+     * @return Response
      */
     public function action_delete($id = null)
     {
         // レシートIDがない場合は一覧へ戻る
-        if ($id === null) {
+        if (empty($id)) {
             return Response::redirect('/receipt/list');
         }
 

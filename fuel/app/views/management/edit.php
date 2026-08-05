@@ -3,7 +3,7 @@
     <head>
         <!-- 文字コード・画面設定 -->
         <meta charset="utf-8">
-        <meta name="robots" content="noindex,nofllow">
+        <meta name="robots" content="noindex,nofollow">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- jQuery読込 -->
@@ -20,15 +20,22 @@
         </div>
 
         <!-- 商品編集フォーム -->
-        <form action="/management/update/<?= $item['_id']; ?>" method="post">
-
+        <form
+            class="product_form"
+            action="/management/update/<?= $item['_id']; ?>"
+            method="post"
+        >
             <table class="insert_table">
 
                 <!-- 商品名 -->
                 <tr>
                     <th>商品名</th>
                     <td>
-                        <input type="text" name="product_name" value="<?= $item['name']; ?>">
+                        <input
+                            type="text"
+                            name="product_name"
+                            value="<?= $item['name']; ?>"
+                        >
                     </td>
                 </tr>
 
@@ -37,19 +44,31 @@
                     <th>消費税</th>
                     <td>
                         <select name="tax">
-                            <option value="exempt" <?php if ($item['tax'] == 'exempt') echo 'selected'; ?>>
+                            <option
+                                value="exempt"
+                                <?php if ($item['tax'] == 'exempt') echo 'selected'; ?>
+                            >
                                 非課税
                             </option>
 
-                            <option value="included" <?php if ($item['tax'] == 'included') echo 'selected'; ?>>
+                            <option
+                                value="included"
+                                <?php if ($item['tax'] == 'included') echo 'selected'; ?>
+                            >
                                 税込
                             </option>
 
-                            <option value="8" <?php if ($item['tax'] == 8) echo 'selected'; ?>>
+                            <option
+                                value="8"
+                                <?php if ($item['tax'] == 8) echo 'selected'; ?>
+                            >
                                 8%
                             </option>
 
-                            <option value="10" <?php if ($item['tax'] == 10) echo 'selected'; ?>>
+                            <option
+                                value="10"
+                                <?php if ($item['tax'] == 10) echo 'selected'; ?>
+                            >
                                 10%
                             </option>
                         </select>
@@ -60,7 +79,11 @@
                 <tr>
                     <th>1個あたりの値段(税抜)</th>
                     <td>
-                        <input type="text" name="price" value="<?= $item['price']; ?>">
+                        <input
+                            type="text"
+                            name="price"
+                            value="<?= $item['price']; ?>"
+                        >
                     </td>
                 </tr>
 
@@ -70,7 +93,6 @@
             <div class="js_submit">
                 <button type="submit">更新</button>
             </div>
-
         </form>
 
         <!-- 画面遷移リンク -->

@@ -37,7 +37,9 @@
                         </a>
                     </td>
                     <td>
-                        <?= $user_data['care_level_name']; ?>
+                        <?= isset(Model_Pseudo::$care_level_name[$user_data['care_level']])
+                            ? Model_Pseudo::$care_level_name[$user_data['care_level']]
+                            : '不明'; ?>
                     </td>
                     <td>
                         <a href="/user/upsert/<?= $user_data['_id']; ?>">
@@ -45,7 +47,10 @@
                         </a>
                     </td>
                     <td>
-                        <button type="button" onclick="delete_confirm('<?= $user_data['_id']; ?>', 'user')">
+                        <button
+                            type="button"
+                            onclick="delete_confirm('<?= $user_data['_id']; ?>', 'user')"
+                        >
                             削除
                         </button>
                     </td>

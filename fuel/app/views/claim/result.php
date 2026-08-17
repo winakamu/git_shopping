@@ -14,7 +14,7 @@
         </div>
 
         <div class="explanation_area">
-            <h3 class="js_user_data" data-user="<?= $user['_id']; ?>">
+            <h3 class="js_user_data" data-user="<?= $user_id; ?>">
                 <?= $user['user_name'] ?> 様
             </h3>
             <table class="user_info">
@@ -50,14 +50,17 @@
                     <th class="cnt_col">回数</th>
                     <th class="col_120">区分支給限度<br>基準内単位数</th>
                 </tr>
-                <?php foreach ($items['service_data'] as $service): ?>
+            </thead>
+            <tbody>
+                <?php foreach ($result['service_data'] as $service): ?>
                 <tr>
                     <td class="js_service_code"><?= $service['code'] ?></td>
                     <td class="js_name">
                         <?php if ($service['issue_limit'] === 'outside'): ?>
                         ◎
                         <?php endif; ?>
-                        <?= $service['name'] ?></td>
+                        <?= $service['name'] ?>
+                    </td>
                     <td class="js_unit"><?= $service['unit'] ?></td>
                     <td class="js_service_count"><?= $service['service_count'] ?></td>
                     <td class="js_service_unit"><?= $service['service_unit'] ?></td>
@@ -65,18 +68,17 @@
                 <?php endforeach; ?>
                 <tr>
                     <td class="result_total" colspan="4">限度額内単位数</td>
-                    <td><?= $items['within_total'] ?></td>
+                    <td><?= $result['within_total'] ?></td>
                 </tr>
                 <tr>
                     <td class="result_total" colspan="4">限度額外単位数</td>
-                    <td><?= $items['outside_total'] ?></td>
+                    <td><?= $result['outside_total'] ?></td>
                 </tr>
                 <tr>
                     <td class="result_total" colspan="4">合計</td>
-                    <td><?= $items['within_total']+$items['outside_total'] ?></td>
+                    <td><?= $result['total'] ?></td>
                 </tr>
-            </thead>
-            <tbody id="service_list"></tbody>
+            </tbody>
         </table>
 
         <div class="link_area">

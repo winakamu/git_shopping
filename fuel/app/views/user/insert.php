@@ -10,15 +10,21 @@
 
     <body>
         <div class="js_title">
-            <h1>利用者登録</h1>
+            <h1>
+                <?= !empty($user_id) ? '利用者更新' : '利用者登録' ?>
+            </h1>
         </div>
 
-        <form action="/user/insert" method="post">
+        <form action="" method="post" class="insert_form">
             <table class="insert_table">
                 <tr>
                     <th>利用者名</th>
                     <td>
-                        <input type="text" name="user_name">
+                        <input
+                            type="text"
+                            name="user_name"
+                            value="<?= isset($user['user_name']) ? $user['user_name'] : '' ?>"
+                        >
                     </td>
                 </tr>
 
@@ -27,14 +33,15 @@
                     <td>
                         <select name="care_level">
                             <option value="">介護度を選択</option>
-                            <option value="integ">事業対象者</option>
-                            <option value="prev1">要支援1</option>
-                            <option value="prev2">要支援2</option>
-                            <option value="care1">要介護1</option>
-                            <option value="care2">要介護2</option>
-                            <option value="care3">要介護3</option>
-                            <option value="care4">要介護4</option>
-                            <option value="care5">要介護5</option>
+
+                            <?php foreach (Model_Pseudo::$care_level_name as $value => $name): ?>
+                            <option
+                                value="<?= $value ?>"
+                                <?= isset($user['care_level']) && $user['care_level'] === $value ? 'selected' : '' ?>
+                            >
+                                <?= $name ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                     </td>
                 </tr>
@@ -42,13 +49,19 @@
                 <tr>
                     <th>介護保険給付率(%で入力)</th>
                     <td>
-                        <input type="number" name="rate">
+                        <input
+                            type="number"
+                            name="rate"
+                            value="<?= isset($user['rate']) ? $user['rate'] : '' ?>"
+                        >
                     </td>
                 </tr>
             </table>
 
             <div class="js_submit">
-                <button type="submit">登録</button>
+                <button type="submit">
+                    <?= !empty($user_id) ? '更新' : '登録' ?>
+                </button>
             </div>
         </form>
 

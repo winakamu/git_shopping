@@ -192,3 +192,301 @@ $(function () {
         $('#cart_form').submit();
     });
 });
+
+/*
+**********************************************
+↓PG課題②用
+**********************************************
+*/
+
+/**
+ * 利用者登録・単位数シミュレータの処理を行います。
+ *
+ * 【機能】
+ * ・利用者登録フォームの入力チェック
+ * ・シミュレータへサービスを追加
+ * ・サービス回数の入力チェック
+ * ・計算に必要なサービス情報の送信
+ */
+$(function () {
+
+    /**
+     * 利用者登録フォームの入力チェックを行います。
+     *
+     * 利用者名、介護度、介護保険給付率に未入力がある場合は、
+     * 各入力欄の下へエラーメッセージを表示し、
+     * フォーム送信を中止します。
+     *
+     * @return {void}
+     */
+    $('.insert_form').submit(function (event) {
+
+        // 前回表示したエラーメッセージを削除
+        $(this).find('.error_message').remove();
+
+        // 入力された利用者情報を取得
+        const userName =
+            $(this).find('[name="user_name"]').val().trim();
+
+        const careLevel =
+            $(this).find('[name="care_level"]').val();
+
+        const rate =
+            $(this).find('[name="rate"]').val().trim();
+
+        let hasError = false;
+
+        // 利用者名未入力チェック
+        if (userName === '') {
+            $(this)
+                .find('[name="user_name"]')
+                .after(
+                    '<p class="error_message">'
+                    + '利用者名が空欄です'
+                    + '</p>'
+                );
+
+            hasError = true;
+        }
+
+        // 介護度未選択チェック
+        if (careLevel === '') {
+            $(this)
+                .find('[name="care_level"]')
+                .after(
+                    '<p class="error_message">'
+                    + '介護度が未選択です'
+                    + '</p>'
+                );
+
+            hasError = true;
+        }
+
+        // 介護保険給付率未入力チェック
+        if (rate === '') {
+            $(this)
+                .find('[name="rate"]')
+                .after(
+                    '<p class="error_message">'
+                    + '介護保険給付率(%)が空欄です'
+                    + '</p>'
+                );
+
+            hasError = true;
+        }
+
+        // 入力エラーがある場合はフォーム送信を中止
+        if (hasError) {
+            event.preventDefault();
+        }
+    });
+
+
+    /**
+     * 計算実行ボタン押下時の処理です。
+     *
+     * サービスが選択されていることと、
+     * 各サービスの回数が正しく入力されていることを確認します。
+     *
+     * 入力内容に問題がなければ、サービス情報をhidden項目として
+     * 作成し、計算フォームをControllerへ送信します。
+     *
+     * @return {void}
+     */
+    $('#calc_btn').click(function () {
+
+        // 前回表示したエラーメッセージを削除
+        $('.error_message').remove();
+
+        // サービスが選択されていない場合は処理を中止
+        if ($('#service_list tr').length === 0) {
+            $('#calc_btn').before(
+                '<p class="error_message">'
+                + 'サービスが登録されていません'
+                + '</p>'
+            );
+
+            return;
+        }
+
+        // 前回作成したhidden項目を削除
+        $('#hidden_area').empty();
+
+        let hasError = false;
+
+        /*
+        * 同じサービスコードごとに
+        * 回数をまとめるための配列
+        */
+        const services = {};
+
+        /*
+        * 選択されたサービスを1行ずつ処理
+        */
+        $('#service_list tr').each(function () {
+
+            // サービス情報を取得
+            const code =
+                $(this).find('.js_code').text();
+
+            const name =
+                $(this).find('.js_name').text();
+
+            const unit =
+                $(this).find('.js_unit').data('unit');
+
+            const count =
+                $(this).find('.js_count').val();
+
+            // 回数入力欄が取得できない場合
+            if (count === undefined) {
+                hasError = true;
+                return;
+            }
+
+            const trimmedCount = count.trim();
+
+            // 回数未入力チェック
+            if (trimmedCount === '') {
+                $(this)
+                    .find('.js_count')
+                    .after(
+                        '<p class="error_message">'
+                        + '回数が空です'
+                        + '</p>'
+                    );
+
+                hasError = true;
+                return;
+            }
+
+            // 回数の数値チェック
+            if (!/^\d+$/.test(trimmedCount)) {
+                $(this)
+                    .find('.js_count')
+                    .after(
+                        '<p class="error_message">'
+                        + '回数は半角数字で入力してください'
+                        + '</p>'
+                    );
+
+                hasError = true;
+                return;
+            }
+
+            /*
+            * 同じサービスコードがすでにある場合は
+            * 回数を加算
+            * JavaScriptでは存在しないプロパティを取得すると、undefinedとなり、
+            * 何も入っていない（初回）場合、if (undefined) でelseを実行。
+            * 同じサービスコードの場合は、回数をプラス
+            * 
+            */
+            if (services[code]) {
+                services[code].count += Number(trimmedCount);
+            } else {
+                /*
+                * 初めてのサービスコードの場合は
+                * サービス情報を登録
+                */
+                services[code] = {
+                    code: code,
+                    name: name,
+                    unit: unit,
+                    count: Number(trimmedCount)
+                };
+            }
+        });
+
+        // 入力エラーがある場合は処理を中止
+        if (hasError) {
+            return;
+        }
+
+        /*
+        * まとめたサービス情報から
+        * Controllerへ送信するhidden項目を作成
+        */
+        let serviceCount = 0;
+
+        $.each(services, function (code, service) {
+
+            let hiddenInputs = '';
+
+            hiddenInputs += '<input type="hidden"'
+                + ' name="services['
+                + serviceCount
+                + '][code]"'
+                + ' value="' + service.code + '">';
+
+            hiddenInputs += '<input type="hidden"'
+                + ' name="services['
+                + serviceCount
+                + '][name]"'
+                + ' value="' + service.name + '">';
+
+            hiddenInputs += '<input type="hidden"'
+                + ' name="services['
+                + serviceCount
+                + '][unit]"'
+                + ' value="' + service.unit + '">';
+
+            hiddenInputs += '<input type="hidden"'
+                + ' name="services['
+                + serviceCount
+                + '][count]"'
+                + ' value="' + service.count + '">';
+
+            $('#hidden_area').append(hiddenInputs);
+
+            serviceCount++;
+        });
+
+        // Controllerへサービス情報を送信
+        $('#add_service').submit();
+    });
+
+
+    /**
+     * サービス追加ボタン押下時の処理です。
+     *
+     * ボタンに設定されたサービス情報を取得し、
+     * 単位数シミュレータのサービス一覧へ追加します。
+     *
+     * @return {void}
+     */
+    $('.js_add_service').click(function () {
+
+        // ボタンに設定されたサービス情報を取得
+        const code = $(this).data('code');
+        const name = $(this).data('name');
+        const unit = $(this).data('unit');
+
+        // サービス一覧へ追加する行を作成
+        let row = '';
+
+        row += '<tr>';
+        row += '<td class="js_code">'
+            + code
+            + '</td>';
+
+        row += '<td class="js_name">'
+            + name
+            + '</td>';
+
+        row += '<td class="js_unit" data-unit="'
+            + unit
+            + '">'
+            + unit
+            + '</td>';
+
+        row += '<td>'
+            + '<input type="number" class="js_count">'
+            + '</td>';
+
+        row += '</tr>';
+
+        // サービス一覧へ追加
+        $('#service_list').append(row);
+    });
+});

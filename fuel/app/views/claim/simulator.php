@@ -20,7 +20,9 @@
                 <tr>
                     <th>要介護度</th>
                     <td>
-                        <?= $user['care_level_name'] ?>
+                        <?= isset(Model_Pseudo::$care_level_name[$user['care_level']])
+                            ? Model_Pseudo::$care_level_name[$user['care_level']]
+                           : '不明' ?>
                     </td>
                 </tr>
                 <tr>
@@ -49,7 +51,6 @@
                 data-type="<?= $code['type']; ?>"
                 data-issue_limit="<?= $code['issue_limit']; ?>"
                 data-calc="<?= $code['calc']; ?>"
-                data-sort="<?= $code['sort']; ?>"
             >
                 <div class="service_code_name">
                     <?= $code['name']; ?>
@@ -64,6 +65,12 @@
         <div class="border_line"></div>
 
         <form id="add_service" action="/claim/calc" method="post">
+            <input
+                type="hidden"
+                name="user_id"
+                value="<?= $user['_id']; ?>"
+            >
+
             <table class="cart_table">
                 <thead>
                     <tr>

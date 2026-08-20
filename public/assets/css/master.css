@@ -192,3 +192,14 @@
 .insert_table th {
     padding-top: 4px;
 }
+
+.js_care_level {
+    width: 180px;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.care_level_area {
+    text-align: center;
+    margin-bottom: 20px;
+}

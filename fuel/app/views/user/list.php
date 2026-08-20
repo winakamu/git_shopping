@@ -13,6 +13,20 @@
             <h1>利用者一覧</h1>
             <p>名前のリンクを押下すると単位数シミュレータに遷移するよ</p>
         </div>
+
+        <div class="care_level_area">
+            <label>
+                介護度
+                <select class="js_care_level">
+                <option value="">全て</option>
+                <?php foreach (Model_User::$care_level_name as $value => $name): ?>
+                    <option value="<?= $value ?>">
+                        <?= $name ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
         <table class="user_list">
             <thead>
                 <tr>
@@ -23,7 +37,7 @@
                     <th>削除</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="js_user_list">
             <?php $cnt = 1;?>
                 <?php if (!empty($users)):?>
                 <?php foreach ($users as $user_data): ?>
@@ -37,8 +51,8 @@
                         </a>
                     </td>
                     <td>
-                        <?= isset(Model_Pseudo::$care_level_name[$user_data['care_level']])
-                            ? Model_Pseudo::$care_level_name[$user_data['care_level']]
+                        <?= isset(Model_User::$care_level_name[$user_data['care_level']])
+                            ? Model_User::$care_level_name[$user_data['care_level']]
                             : '不明'; ?>
                     </td>
                     <td>

@@ -151,20 +151,4 @@ class Model_Pseudo extends Model
         'care4' => '30938',
         'care5' => '36217'
     ];
-
-    /**
-     * 介護度コードと画面表示名称の対応表
-     *
-     * @var array
-     */
-    public static $care_level_name = [
-        'integ' => '事業対象者',
-        'prev1' => '要支援1',
-        'prev2' => '要支援2',
-        'care1' => '要介護1',
-        'care2' => '要介護2',
-        'care3' => '要介護3',
-        'care4' => '要介護4',
-        'care5' => '要介護5',
-    ];
 }

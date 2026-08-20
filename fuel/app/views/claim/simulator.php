@@ -20,8 +20,8 @@
                 <tr>
                     <th>要介護度</th>
                     <td>
-                        <?= isset(Model_Pseudo::$care_level_name[$user['care_level']])
-                            ? Model_Pseudo::$care_level_name[$user['care_level']]
+                        <?= isset(Model_User::$care_level_name[$user['care_level']])
+                            ? Model_User::$care_level_name[$user['care_level']]
                            : '不明' ?>
                     </td>
                 </tr>

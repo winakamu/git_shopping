@@ -21,13 +21,13 @@ $(function () {
         $('.error_message').remove();
 
         // 入力された商品名と価格を取得
-        const productName =
+        var productName =
             $(this).find('input[name="product_name"]').val().trim();
 
-        const price =
+        var price =
             $(this).find('input[name="price"]').val().trim();
 
-        let hasError = false;
+        var hasError = false;
 
         // 商品名が未入力の場合はエラーメッセージを表示
         if (productName === '') {
@@ -80,7 +80,7 @@ $(function () {
  */
 function delete_confirm(id, controller) {
     // 削除確認ダイアログを表示
-    const isDelete = window.confirm('削除してよろしいですか？');
+    var isDelete = window.confirm('削除してよろしいですか？');
 
     // OK押下時のみ削除処理を実行
     if (isDelete) {
@@ -110,11 +110,11 @@ $(function () {
      */
     $('.js_add_item').click(function () {
         // ボタンに設定された商品情報を取得
-        const name = $(this).data('name');
-        const price = $(this).data('price');
-        const tax = $(this).data('tax');
+        var name = $(this).data('name');
+        var price = $(this).data('price');
+        var tax = $(this).data('tax');
 
-        let taxLabel = '';
+        var taxLabel = '';
 
         // 税区分を画面表示用の文字列へ変換
         if (tax === 'exempt') {
@@ -126,7 +126,7 @@ $(function () {
         }
 
         // 商品一覧へ追加
-        let row = '<tr>';
+        var row = '<tr>';
         row += '<td class="js_name">' + name + '</td>';
         row += '<td class="js_price" data-price="' + price + '">'
             + Number(price).toLocaleString() + '円</td>';
@@ -164,15 +164,15 @@ $(function () {
         // 作成済みのhidden項目を削除
         $('#hidden_area').empty();
 
-        let itemCount = 0;
+        var itemCount = 0;
 
         // 商品一覧を1行ずつ処理
         $('#cart_list tr').each(function () {
-            const name = $(this).find('.js_name').text();
-            const price = $(this).find('.js_price').data('price');
-            const tax = $(this).find('.js_tax').data('tax');
+            var name = $(this).find('.js_name').text();
+            var price = $(this).find('.js_price').data('price');
+            var tax = $(this).find('.js_tax').data('tax');
 
-            let hiddenInputs = '';
+            var hiddenInputs = '';
             hiddenInputs += '<input type="hidden"'
                 + ' name="items[' + itemCount + '][name]"'
                 + ' value="' + name + '">';
@@ -219,26 +219,27 @@ $(function () {
      *
      * @return {void}
      */
-    $('.insert_form').submit(function (event) {
+    $('.js_button').click(function () {
+        var form = $(this).closest('.insert_form');
 
         // 前回表示したエラーメッセージを削除
-        $(this).find('.error_message').remove();
+        form.find('.error_message').remove();
 
         // 入力された利用者情報を取得
-        const userName =
-            $(this).find('[name="user_name"]').val().trim();
+        var userName =
+            form.find('[name="user_name"]').val().trim();
 
-        const careLevel =
-            $(this).find('[name="care_level"]').val();
+        var careLevel =
+            form.find('[name="care_level"]').val();
 
-        const rate =
-            $(this).find('[name="rate"]').val().trim();
+        var rate =
+            form.find('[name="rate"]').val().trim();
 
-        let hasError = false;
+        var hasError = false;
 
         // 利用者名未入力チェック
         if (userName === '') {
-            $(this)
+            form
                 .find('[name="user_name"]')
                 .after(
                     '<p class="error_message">'
@@ -251,7 +252,7 @@ $(function () {
 
         // 介護度未選択チェック
         if (careLevel === '') {
-            $(this)
+            form
                 .find('[name="care_level"]')
                 .after(
                     '<p class="error_message">'
@@ -264,7 +265,7 @@ $(function () {
 
         // 介護保険給付率未入力チェック
         if (rate === '') {
-            $(this)
+            form
                 .find('[name="rate"]')
                 .after(
                     '<p class="error_message">'
@@ -275,10 +276,13 @@ $(function () {
             hasError = true;
         }
 
-        // 入力エラーがある場合はフォーム送信を中止
+        // 入力エラーがある場合は処理を終了
         if (hasError) {
-            event.preventDefault();
+            return;
         }
+
+        // エラーがない場合はフォーム送信
+        form[0].submit();
     });
 
 
@@ -312,13 +316,13 @@ $(function () {
         // 前回作成したhidden項目を削除
         $('#hidden_area').empty();
 
-        let hasError = false;
+        var hasError = false;
 
         /*
         * 同じサービスコードごとに
         * 回数をまとめるための配列
         */
-        const services = {};
+        var services = {};
 
         /*
         * 選択されたサービスを1行ずつ処理
@@ -326,16 +330,16 @@ $(function () {
         $('#service_list tr').each(function () {
 
             // サービス情報を取得
-            const code =
+            var code =
                 $(this).find('.js_code').text();
 
-            const name =
+            var name =
                 $(this).find('.js_name').text();
 
-            const unit =
+            var unit =
                 $(this).find('.js_unit').data('unit');
 
-            const count =
+            var count =
                 $(this).find('.js_count').val();
 
             // 回数入力欄が取得できない場合
@@ -344,7 +348,7 @@ $(function () {
                 return;
             }
 
-            const trimmedCount = count.trim();
+            var trimmedCount = count.trim();
 
             // 回数未入力チェック
             if (trimmedCount === '') {
@@ -407,11 +411,11 @@ $(function () {
         * まとめたサービス情報から
         * Controllerへ送信するhidden項目を作成
         */
-        let serviceCount = 0;
+        var serviceCount = 0;
 
         $.each(services, function (code, service) {
 
-            let hiddenInputs = '';
+            var hiddenInputs = '';
 
             hiddenInputs += '<input type="hidden"'
                 + ' name="services['
@@ -458,12 +462,12 @@ $(function () {
     $('.js_add_service').click(function () {
 
         // ボタンに設定されたサービス情報を取得
-        const code = $(this).data('code');
-        const name = $(this).data('name');
-        const unit = $(this).data('unit');
+        var code = $(this).data('code');
+        var name = $(this).data('name');
+        var unit = $(this).data('unit');
 
         // サービス一覧へ追加する行を作成
-        let row = '';
+        var row = '';
 
         row += '<tr>';
         row += '<td class="js_code">'
@@ -488,5 +492,71 @@ $(function () {
 
         // サービス一覧へ追加
         $('#service_list').append(row);
+    });
+
+    /**
+     * 介護度選択時の利用者一覧絞り込み処理です。
+     *
+     * 選択された介護度を取得し、
+     * Ajax通信で該当する利用者情報を取得します。
+     *
+     * @return {void}
+     */
+    $('.js_care_level').change(function () {
+        var careLevel = $(this).val();
+
+        //Ajax通信
+        $.ajax({
+            url: '/api/user/user_list',
+            type: 'GET',
+            data: {
+                care_level: careLevel
+            },
+            dataType: 'json'
+        })
+
+        // Ajax通信が成功して完了(done)したら、以下の処理を実施(usersにはapiが返したデータが入る)
+        .done(function (users) {
+        var html = '';
+        //usersがない OR usersが0件なら
+        if (!users || users.length === 0) {
+            html =
+                '<tr>' +
+                    '<td colspan="5">利用者がいません</td>' +
+                '</tr>';
+        } else {
+            $.each(users, function (index, user) {
+                html +=
+                    '<tr>' +
+                        //No.1~
+                        '<td>' + (index + 1) + '</td>' +
+                        //名前
+                        '<td>' +
+                            '<a href="/claim/simulator/' + user._id + '">' +
+                                user.user_name +
+                            '</a>' +
+                        '</td>' +
+                        //要介護度
+                        '<td>' + user.care_level_name + '</td>' +
+                        //編集ボタン
+                        '<td>' +
+                            '<a href="/user/upsert/' + user._id + '">' +
+                                '<button type="button">編集</button>' +
+                            '</a>' +
+                        '</td>' +
+                        //削除ボタン
+                        '<td>' +
+                            '<button type="button" ' +
+                                'onclick="delete_confirm(\'' + user._id + '\', \'user\')">' +
+                                '削除' +
+                            '</button>' +
+                        '</td>' +
+                    '</tr>';
+            });
+        }
+
+        // 上記で作成したHTMLで利用者一覧を書き換え
+        $('.js_user_list').html(html);
+        });
     });
 });

@@ -34,7 +34,7 @@
                         <select name="care_level">
                             <option value="">介護度を選択</option>
 
-                            <?php foreach (Model_Pseudo::$care_level_name as $value => $name): ?>
+                            <?php foreach (Model_User::$care_level_name as $value => $name): ?>
                             <option
                                 value="<?= $value ?>"
                                 <?= isset($user['care_level']) && $user['care_level'] === $value ? 'selected' : '' ?>
@@ -59,7 +59,7 @@
             </table>
 
             <div class="js_submit">
-                <button type="submit">
+                <button type="button" class="js_button">
                     <?= !empty($user_id) ? '更新' : '登録' ?>
                 </button>
             </div>

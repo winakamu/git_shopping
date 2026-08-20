@@ -98,19 +98,11 @@ class Model_Claim extends Model
 
             // このサービスの計算結果
             $service_unit = 0;
-
+            
             /*
-             * 1回につき
+             * 1回・1月につき
              */
-            if ($calc === 'time') {
-                $service_unit =
-                    (int) $unit * $count;
-            }
-
-            /*
-             * 1日につき
-             */
-            elseif ($calc === 'daily') {
+            if ($calc === 'time' || $calc === 'daily') {
                 $service_unit =
                     (int) $unit * $count;
             }

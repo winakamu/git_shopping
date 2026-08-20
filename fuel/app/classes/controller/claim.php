@@ -70,7 +70,7 @@ class Controller_Claim extends Controller
 
         // 介護度コードを表示用名称へ変換
         $user['care_level_name'] =
-            Model_Pseudo::$care_level_name[
+            Model_User::$care_level_name[
                 $user['care_level']
             ];
 

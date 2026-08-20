@@ -61,6 +61,9 @@ class Controller_User extends Controller
                 (string) Input::post('rate', '')
             );
 
+            // 介護度ごとの支給限度額
+            $limit_units = Model_Pseudo::$limit_unit;
+
             // 入力エラーを格納
             $errors = [];
 
@@ -76,7 +79,7 @@ class Controller_User extends Controller
                     '介護度が未選択です';
 
             } elseif (
-                !isset(Model_Pseudo::$limit_unit[$care_level])
+                !isset($limit_units[$care_level])
             ) {
                 $errors['care_level'] =
                     '不正な介護度です';
@@ -112,7 +115,7 @@ class Controller_User extends Controller
                 'care_level' => $care_level,
                 'rate' => $rate,
                 'limit_unit' =>
-                    Model_Pseudo::$limit_unit[$care_level],
+                    $limit_units[$care_level]
             ];
 
             /*

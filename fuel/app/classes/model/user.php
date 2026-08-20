@@ -80,4 +80,43 @@ class Model_User extends Model_Mongo
     {
         return self::delete_data($id);
     }
+
+
+    /**
+     * 介護度コードと画面表示名称の対応表
+     *
+     * @var array
+     */
+    public static $care_level_name = [
+        'integ' => '事業対象者',
+        'prev1' => '要支援1',
+        'prev2' => '要支援2',
+        'care1' => '要介護1',
+        'care2' => '要介護2',
+        'care3' => '要介護3',
+        'care4' => '要介護4',
+        'care5' => '要介護5',
+    ];
+
+    /**
+     * 指定された介護度の利用者情報を取得します。
+     *
+     * @param string $care_level 介護度
+     * @return array 利用者一覧
+     */
+    public static function get_users_by_care_level($care_level)
+    {
+        //全利用者を取得(継承クラスより)
+        $users = self::get_all_data();
+        $filtered_users = [];
+
+        foreach ($users as $user) {
+            //指定された介護度と一致
+            if ($user['care_level'] === $care_level) {
+                $filtered_users[] = $user;
+            }
+        }
+        //絞り込んだ利用者だけ返す
+        return $filtered_users;
+    }
 }
